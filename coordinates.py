@@ -1,6 +1,5 @@
-from geopy.geocoders import Nominatim
+import requests
 from typing import NamedTuple
-import time
 
 
 class Coordinates(NamedTuple):
@@ -8,10 +7,15 @@ class Coordinates(NamedTuple):
     longitude: float
 
 
-app = Nominatim(user_agent="tutorial")
-
-
-def get_coordinates_by_address(address) -> Coordinates:
+def get_coordinates_by_address() -> Coordinates:
     """Returns coordinates using IP-address"""
-    pass
-
+    try:
+        response = requests.get(f"http://ip-api.com/json/")
+        data = response.json()
+        return Coordinates(latitude=data["lat"], longitude=data["lon"])
+    except requests.ConnectionError as e:
+        print("OOPS! Connection Error. Make sure you are connected to Internet")
+    except requests.Timeout as e:
+        print("OOPS! Timeout Error")
+    except requests.RequestException as e:
+        print("OOPS! Request Error")

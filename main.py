@@ -3,9 +3,6 @@ from weather_api_service import get_weather
 from weather_formatter import format_weather
 
 
-address = "Санкт-Петербург, Россия"
-
-
 def main():
     # coordinates = get_coordinates_by_address(address)
     # weather = get_weather(coordinates)
