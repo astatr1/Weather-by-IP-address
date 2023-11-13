@@ -1,6 +1,6 @@
 import json
 import ssl
-import urllib
+import urllib.request
 from datetime import datetime
 from json import JSONDecodeError
 from typing import NamedTuple, Literal
@@ -34,14 +34,14 @@ class Weather(NamedTuple):
 
 def get_weather(coordinates: Coordinates) -> Weather:
     """Request weather in OpenWeather API and return it"""
-    openweather_responce = _get_openweather_response(
+    openweather_response = _get_openweather_response(
         longitude=coordinates.longitude, latitude=coordinates.latitude)
-    weather = _parse_openweather_response(openweather_responce)
+    weather = _parse_openweather_response(openweather_response)
     return weather
 
 
 def _get_openweather_response(latitude: float, longitude: float) -> str:
-    ssl.create_default_https_context = ssl._create_unverified_context
+    ssl._create_default_https_context = ssl._create_unverified_context
     url = config.OPENWEATHER_URL.format(lat=latitude, lon=longitude)
     try:
         return urllib.request.urlopen(url).read()
@@ -49,9 +49,9 @@ def _get_openweather_response(latitude: float, longitude: float) -> str:
         raise APIServiceError
 
 
-def _parse_openweather_response(openweather_responce: str) -> Weather:
+def _parse_openweather_response(openweather_response: str) -> Weather:
     try:
-        openweather_dict = json.loads(openweather_responce)
+        openweather_dict = json.loads(openweather_response)
     except JSONDecodeError:
         raise APIServiceError
     return Weather(
